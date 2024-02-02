@@ -1,0 +1,140 @@
+body {
+  display: grid;
+  place-items: center;
+  min-height: 100vh;
+  min-width: 100vw;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+.theme-btn {
+  --h: 4rem;
+  --w: 8rem;
+  --border-size: 4px;
+  --thumb-pad: 4px;
+  --thumb-color: #d5a021;
+  --track-color: #ede7d9;
+  --btn-border-color: #a49694;
+  --anime-time: 0.25s;
+
+  border-radius: calc(var(--h) / 2);
+  width: var(--w);
+  height: var(--h);
+  overflow: hidden;
+  box-shadow: 0px 0px 0px var(--border-size) var(--btn-border-color);
+
+  &:has(.hidden-input:checked) {
+    // Dark mode
+    .thumb {
+      .light-icon {
+        animation: thumb-fade var(--anime-time) linear forwards;
+      }
+
+      .dark-icon {
+        animation: thumb-fade-reverse var(--anime-time) linear forwards;
+      }
+    }
+  }
+
+  &:has(.hidden-input:not(:checked)) {
+    .thumb {
+      .light-icon {
+        animation: thumb-fade-reverse var(--anime-time) linear forwards;
+      }
+
+      .dark-icon {
+        animation: thumb-fade var(--anime-time) linear forwards;
+      }
+    }
+  }
+
+  .track {
+    position: relative;
+    background: var(--track-color);
+    width: var(--w);
+    height: var(--h);
+    border: var(--thumb-pad) solid transparent;
+
+    .thumb {
+      position: absolute;
+      top: 0;
+      left: 0;
+      height: 100%;
+      aspect-ratio: 1;
+      border-radius: 50%;
+      background: var(--thumb-color);
+      cursor: pointer;
+      transition: scale var(--anime-time) ease-in-out;
+
+      .icons {
+        position: relative;
+        width: 100%;
+        height: 100%;
+        user-select: none;
+        pointer-events: none;
+
+        .icon {
+          position: absolute;
+          top: 50%;
+          left: 50%;
+          transform: translate(-50%, -50%);
+          transform-origin: top left;
+        }
+      }
+
+      &:active {
+        cursor: grabbing;
+        scale: 0.95;
+      }
+
+      &:not(.active) {
+        transition: transform var(--anime-time) linear,
+          scale var(--anime-time) ease-in-out;
+      }
+    }
+  }
+
+  .hidden-input {
+    display: none;
+  }
+}
+
+@keyframes thumb-fade {
+  0% {
+    rotate: 0deg;
+    opacity: 1;
+    scale: 1;
+  }
+  50% {
+    opacity: 0;
+    scale: 0.5;
+    rotate: -180deg;
+  }
+  100% {
+    opacity: 0;
+    scale: 0.5;
+    rotate: -180deg;
+  }
+}
+
+@keyframes thumb-fade-reverse {
+  0% {
+    opacity: 0;
+    scale: 0.5;
+    rotate: -180deg;
+  }
+  50% {
+    opacity: 0;
+    scale: 0.5;
+    rotate: -180deg;
+  }
+  100% {
+    opacity: 1;
+    scale: 1;
+    rotate: 0deg;
+  }
+}
