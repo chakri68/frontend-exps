@@ -9,6 +9,14 @@
     "allowJs": true,
     "checkJs": true,
     "outDir": "dist",
+    "paths": {
+      "@/*": [
+        "./src/*"
+      ],
+      "@utils/*": [
+        "./src/utils/*"
+      ]
+    }
   },
   "include": [
     "src/**/*",

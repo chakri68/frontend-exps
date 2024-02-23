@@ -16,10 +16,6 @@ async function buildConfig() {
       filename: "[name].bundle.js",
       path: path.resolve(__dirname, "dist"),
     },
-    devServer: {
-      contentBase: "./dist",
-      hot: true,
-    },
     optimization: {
       runtimeChunk: "single",
       splitChunks: {
@@ -47,6 +43,7 @@ async function buildConfig() {
       extensions: ["*", ".ts", ".js"],
       alias: {
         "@": path.resolve(__dirname, "src"),
+        "@utils": path.resolve(__dirname, "src/utils"),
       },
     },
     module: {
