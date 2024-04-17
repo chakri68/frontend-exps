@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title><%= htmlWebpackPlugin.options.title %></title>
+  </head>
+  <body>
+    <template id="grid-template">
+      <div class="grid">
+        <div class="toolbar">
+          <select name="mode" class="mode-select"></select>
+        </div>
+        <div class="grid-body">
+          <div class="grid-header-item">Sunday</div>
+          <div class="grid-header-item">Monday</div>
+          <div class="grid-header-item">Tuesday</div>
+          <div class="grid-header-item">Wednesday</div>
+          <div class="grid-header-item">Thursday</div>
+          <div class="grid-header-item">Friday</div>
+          <div class="grid-header-item">Saturday</div>
+        </div>
+      </div>
+    </template>
+    <template id="grid-item-template">
+      <div class="grid-item">
+        <span class="grid-item-content"></span>
+      </div>
+    </template>
+  </body>
+</html>

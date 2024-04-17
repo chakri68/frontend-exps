@@ -1,0 +1,85 @@
+.grid {
+  width: 100%;
+  height: 100%;
+
+  .toolbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem;
+    border-bottom: 1px solid #000;
+
+    .toolbar-title {
+      font-size: 1.5rem;
+    }
+
+    .toolbar-actions {
+      display: flex;
+      gap: 1rem;
+
+      button {
+        padding: 0.5rem 1rem;
+        border: none;
+        background-color: #000;
+        color: #fff;
+        font-size: 1rem;
+        cursor: pointer;
+        transition: background-color 0.3s;
+
+        &:hover {
+          background-color: #333;
+        }
+      }
+    }
+  }
+
+  .grid-body {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    grid-template-rows: repeat(6, 1fr);
+    gap: 1px;
+    width: 100%;
+    height: 100%;
+    text-align: center;
+  }
+
+  .grid-item {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border: 1px solid #000;
+    background-color: #fff;
+    color: #000;
+    font-size: 1.5rem;
+    cursor: pointer;
+    transition: background-color 0.3s;
+
+    &.empty {
+      border: none;
+    }
+
+    &.hovered {
+      background-color: blue !important;
+      color: #fff;
+    }
+
+    &:hover {
+      background-color: #f0f0f0;
+    }
+
+    &.today {
+      background-color: #f0f0f0;
+    }
+
+    &.selected {
+      background-color: #000;
+      color: #fff;
+    }
+
+    &.disabled {
+      background-color: #f0f0f0;
+      color: #ccc;
+      cursor: not-allowed;
+    }
+  }
+}
