@@ -84,7 +84,6 @@ async function handleMusicSubmit() {
     const dominantColor = await getDominantColor(
       `data:image/png;base64,${base64String}`
     );
-    console.log({ base64String, dominantColor });
     musicPlayerEl.style.setProperty("--theme-color", dominantColor);
     bgEl.style.backgroundImage = `url('data:image/png;base64,${base64String}')`;
   } else {

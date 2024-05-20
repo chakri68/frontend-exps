@@ -109,26 +109,26 @@ export class MusicPlayer {
       return;
     } else if (currentTime < oldLyric[0]) {
       const activeIdx =
-        this.lyricArr.findIndex(([timestamp]) => currentTime > timestamp) - 1;
+        this.lyricArr.findIndex(([timestamp]) => timestamp > currentTime) - 1;
       if (activeIdx < 0) {
+        this.updateTimedLyrics(this.lyricArr.length - 1);
         return;
       }
       this.updateTimedLyrics(activeIdx);
-    } else if (nextLyric && currentTime > nextLyric[0]) {
+    } else if (!nextLyric) {
+      this.updateTimedLyrics(this.lyricArr.length - 1);
+      return;
+    } else if (currentTime > nextLyric[0]) {
       const nextNextLyric = this.lyricArr[this.currentLyricIndex + 2];
-      console.log({ nextNextLyric });
       if (!nextNextLyric || (nextNextLyric && currentTime < nextNextLyric[0]))
         this.updateTimedLyrics(this.currentLyricIndex + 1);
       else {
         const activeIdx =
-          this.lyricArr
-            .slice(this.currentLyricIndex + 1)
-            .findIndex(([timestamp]) => timestamp > currentTime) +
-          this.currentLyricIndex;
+          this.lyricArr.findIndex(([timestamp]) => timestamp > currentTime) - 1;
         if (activeIdx < 0) {
+          this.updateTimedLyrics(this.lyricArr.length - 1);
           return;
         }
-        console.log({ activeIdx, len: this.lyricArr });
         this.updateTimedLyrics(activeIdx);
       }
     }
