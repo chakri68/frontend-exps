@@ -1,0 +1,270 @@
+@import url("https://fonts.googleapis.com/css2?family=Fira+Code:wght@300..700&family=JetBrains+Mono:ital,wght@0,100..800;1,100..800&family=Poetsen+One&family=Ubuntu+Mono:ital,wght@0,400;0,700;1,400;1,700&display=swap");
+
+body {
+  background: #f5f5f5;
+  font-family: "Poetsen Ones", sans-serif;
+  display: grid;
+  place-items: center;
+  background-color: #000;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+button {
+  cursor: pointer;
+  background: #000;
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  padding: 0.5rem 1rem;
+  font-size: 1rem;
+}
+
+*.hidden {
+  display: none !important;
+}
+
+.inp-card {
+  padding: 1rem;
+  border-radius: 6px;
+  overflow: hidden;
+  height: 100%;
+  width: 100%;
+  background: #fff;
+  gap: 2rem;
+
+  position: relative;
+
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+
+  &__input {
+    width: 100%;
+    padding: 0.5rem;
+    border: none;
+    border-radius: 6px;
+    margin-bottom: 1rem;
+    font-size: 1rem;
+  }
+
+  &__btn {
+    padding: 0.5rem 1rem;
+    border: none;
+    border-radius: 6px;
+    background: #000;
+    color: #fff;
+    font-size: 1rem;
+    cursor: pointer;
+  }
+}
+
+.lyrics-card {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  border-radius: 1rem;
+  overflow: hidden;
+  width: 600px;
+  max-width: 100%;
+  max-height: 100vh;
+
+  position: relative;
+
+  background-size: cover;
+  background-position: center;
+
+  &__bg {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.25);
+    backdrop-filter: blur(30px); /* Apply the Gaussian blur */
+    -webkit-backdrop-filter: blur(30px); /* For Safari */
+  }
+
+  &__content {
+    width: 100%;
+    height: 100%;
+    overflow-y: scroll;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2.5rem;
+    z-index: 10;
+    padding: 4rem;
+    padding-top: 50%;
+    padding-bottom: 50%;
+
+    &::-webkit-scrollbar {
+      display: none;
+    }
+
+    &::before {
+      // Top shadow
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 1px;
+      box-shadow: 0 0 10rem 5rem rgba(0, 0, 0, 0.75);
+    }
+
+    &::after {
+      // Bottom shadow
+      content: "";
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      height: 1px;
+      box-shadow: 0 0 10rem 5rem rgba(0, 0, 0, 1);
+    }
+
+    &__lyric {
+      font-size: 1.5rem;
+      color: hsl(0, 0%, 80%);
+      cursor: pointer;
+      font-weight: bold;
+      user-select: none;
+      transition: color 0.2s, font-size 0.2s;
+      text-align: center;
+
+      &:hover {
+        // brighten the text
+        color: hsl(0, 0%, 100%);
+      }
+
+      &.unvisited {
+        color: hsl(0, 0%, 70%);
+      }
+
+      &.visited {
+        color: hsl(0, 0%, 90%);
+      }
+
+      &.active {
+        font-size: 1.75rem;
+        color: hsl(0, 0%, 100%);
+      }
+    }
+  }
+
+  .music-player {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: transparent;
+    color: #fff;
+    padding: 0 4rem 5rem 4rem;
+    display: grid;
+    grid-template-rows: 1rem auto;
+    gap: 2rem;
+    z-index: 100;
+    height: 10rem;
+
+    audio {
+      display: none;
+    }
+
+    &__title {
+      font-size: 1.5rem;
+    }
+
+    &__progress {
+      --progress: 50%;
+      width: 100%;
+      height: 0.5rem;
+      background: #fff;
+      border-radius: 6px;
+      position: relative;
+      cursor: grab;
+
+      &:active {
+        cursor: grabbing;
+      }
+
+      &__bar {
+        height: 100%;
+        background: rgba(0, 0, 0, 0.75);
+        border-radius: 6px;
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: var(--progress);
+      }
+    }
+
+    &__controls {
+      display: flex;
+      gap: 1rem;
+      justify-content: center;
+
+      > * {
+        border-radius: 50%;
+        height: 4rem;
+        width: 4rem;
+        display: grid;
+        place-items: center;
+        background: #fff;
+        color: #000;
+        border-radius: 50%;
+        height: 4rem;
+        width: 4rem;
+        display: grid;
+        place-items: center;
+        background: #fff;
+        color: #000;
+        border: none; /* Remove default border */
+        cursor: pointer; /* Change cursor to pointer on hover */
+        transition: transform 0.3s ease, box-shadow 0.3s ease,
+          background 0.3s ease; /* Add transitions */
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Initial box shadow */
+
+        &:hover {
+          transform: scale(1.1); /* Slightly enlarge the button on hover */
+          box-shadow: 0 8px 12px rgba(0, 0, 0, 0.2); /* Enhance shadow on hover */
+          background: #f0f0f0; /* Slightly change background color on hover */
+        }
+
+        &:active {
+          transform: scale(1.05); /* Slightly reduce the scale on click */
+          box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Reset shadow on click */
+          background: #e0e0e0; /* Change background color on click */
+        }
+      }
+
+      #play-pause-btn {
+        &.paused {
+          > .pause {
+            display: none;
+          }
+        }
+        &.playing {
+          > .play {
+            display: none;
+          }
+        }
+      }
+    }
+
+    &__btn {
+      padding: 0.5rem 1rem;
+      border: none;
+      border-radius: 6px;
+      background: #fff;
+      color: #000;
+      font-size: 1rem;
+      cursor: pointer;
+    }
+  }
+}

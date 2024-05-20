@@ -31,5 +31,8 @@
     "webpack": "^5.87.0",
     "webpack-cli": "^5.1.4",
     "webpack-dev-server": "^4.15.1"
+  },
+  "dependencies": {
+    "jsmediatags": "^3.9.7"
   }
 }

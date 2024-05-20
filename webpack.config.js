@@ -40,7 +40,7 @@ async function buildConfig() {
       hot: true,
     },
     resolve: {
-      extensions: ["*", ".ts", ".js"],
+      extensions: [".*", ".ts", ".js"],
       alias: {
         "@": path.resolve(__dirname, "src"),
         "@utils": path.resolve(__dirname, "src/utils"),

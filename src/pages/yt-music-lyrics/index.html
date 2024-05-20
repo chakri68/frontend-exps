@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title><%= htmlWebpackPlugin.options.title %></title>
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0"
+    />
+  </head>
+  <body>
+    <main>
+      <div id="lyrics-card" class="lyrics-card hidden">
+        <div class="lyrics-card__bg"></div>
+        <div class="lyrics-card__content"></div>
+        <div class="music-player">
+          <audio id="music-player-audio" src=""></audio>
+          <div class="music-player__progress">
+            <div class="music-player__progress__bar"></div>
+          </div>
+          <div class="music-player__controls">
+            <button id="prev-btn">
+              <span class="material-symbols-outlined"> skip_previous </span>
+            </button>
+            <button id="play-pause-btn" class="playing">
+              <span class="material-symbols-outlined play"> play_arrow </span>
+              <span class="material-symbols-outlined pause"> pause </span>
+            </button>
+            <button id="next-btn">
+              <span class="material-symbols-outlined"> skip_next </span>
+            </button>
+          </div>
+        </div>
+      </div>
+      <div class="inp-card hidden" id="inp-card">
+        <input class="inp-card__input" id="lrc-inp" type="file" accept=".mp3" />
+        <button id="inp-card__btn">Open Song</button>
+      </div>
+    </main>
+  </body>
+</html>
