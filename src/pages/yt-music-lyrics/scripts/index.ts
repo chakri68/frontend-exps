@@ -2,6 +2,7 @@ import { base64ArrayBuffer } from "@/utils/base64";
 import "../styles/index.scss";
 import jsmediatags from "./jsmediatags/jsmediatags.js";
 import { MusicPlayer } from "./MusicPlayer";
+import getDominantColor from "@/utils/getDominantColor";
 
 async function jsMediaTags(file: File | string | Blob) {
   return await new Promise((resolve, reject) => {
@@ -23,12 +24,6 @@ function showElement(el: HTMLElement) {
 function hideElement(el: HTMLElement) {
   el.classList.add("hidden");
 }
-
-function compareLyrics(a: string, b: string) {
-  return a.replace(/\[|\]|\./g, "").localeCompare(b.replace(/\[|\]|\./g, ""));
-}
-
-function updateLyricClasses(timestamp: number) {}
 
 function processLyrics(lyrics: string) {
   const lines = lyrics.split("\n");
@@ -61,6 +56,7 @@ const inpCard = document.getElementById("inp-card") as HTMLElement;
 inpCard.querySelector("button")?.addEventListener("click", handleMusicSubmit);
 const lyricsCard = document.getElementById("lyrics-card") as HTMLElement;
 const mainEl = document.querySelector("main") as HTMLElement;
+const musicPlayerEl = document.querySelector(".music-player") as HTMLDivElement;
 
 function mainLoop() {
   // Show the input card first and then the lyrics card
@@ -85,7 +81,11 @@ async function handleMusicSubmit() {
 
   if (albumArt) {
     const base64String = base64ArrayBuffer(new Uint8Array(albumArt).buffer);
-    console.log({ base64String });
+    const dominantColor = await getDominantColor(
+      `data:image/png;base64,${base64String}`
+    );
+    console.log({ base64String, dominantColor });
+    musicPlayerEl.style.setProperty("--theme-color", dominantColor);
     bgEl.style.backgroundImage = `url('data:image/png;base64,${base64String}')`;
   } else {
     bgEl.style.backgroundImage = "none";

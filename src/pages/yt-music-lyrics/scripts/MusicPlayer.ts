@@ -5,7 +5,7 @@ export class MusicPlayer {
   lyricSpans: NodeListOf<HTMLSpanElement> | null = null;
 
   updateProgressFn: () => void;
-  updateLyricClassesFn: () => void;
+  handleLyricsUpdateFn: () => void;
   handleSeekFn: (e: MouseEvent) => void;
 
   // For efficient updates of classes
@@ -17,7 +17,7 @@ export class MusicPlayer {
   ) {
     this.handleSeekFn = this.handleSeek.bind(this);
     this.updateProgressFn = this.updateProgress.bind(this);
-    this.updateLyricClassesFn = this.softUpdateLyricClasses.bind(this);
+    this.handleLyricsUpdateFn = this.handleLyricsUpdate.bind(this);
 
     this.audioEl = document.getElementById(
       "music-player-audio"
@@ -43,15 +43,13 @@ export class MusicPlayer {
       }
     });
     this.audioEl.addEventListener("timeupdate", this.updateProgressFn);
-
-    this.audioEl.addEventListener("timeupdate", this.updateLyricClassesFn);
+    this.audioEl.addEventListener("timeupdate", this.handleLyricsUpdateFn);
 
     this.initProgressEvents();
     this.initLyricEvents();
   }
 
   play() {
-    this.hardUpdateLyricClasses();
     this.audioEl.play();
   }
 
@@ -59,50 +57,12 @@ export class MusicPlayer {
     this.audioEl.pause();
   }
 
-  hardUpdateLyricClasses() {
-    const time = this.audioEl.currentTime;
-    const lArr = this.lyricArr;
-    if (!lArr) {
-      return;
-    }
-    // Mark all the lyrics till the active one as played
-    this.lyricSpans?.forEach((span, i) => {
-      span.classList.remove("active");
-      span.classList.remove("unvisited");
-      span.classList.remove("visited");
-
-      if (lArr[i][0] > time) {
-        span.classList.add("unvisited");
-      } else if (lArr[i][0] <= time) {
-        span.classList.add("visited");
-      }
-      if (lArr[i][0] <= time && lArr[i + 1] && lArr[i + 1][0] >= time) {
-        this.currentLyricIndex = i;
-        span.scrollIntoView({ block: "center", behavior: "smooth" });
-        span.classList.add("active");
-      }
-    });
-  }
-
-  softUpdateLyricClasses() {
-    // Soft update - basically more efficient than hard update
-    if (!this.lyricArr) {
-      return;
-    }
-    if (
-      this.lyricArr[this.currentLyricIndex + 1][0] <= this.audioEl.currentTime
-    ) {
-      this.moveToNextLyric();
-    }
-  }
-
   moveToNextLyric() {
     // Change the old active lyric to visited
     this.lyricSpans?.[this.currentLyricIndex].classList.remove("active");
     this.lyricSpans?.[this.currentLyricIndex].classList.add("visited");
 
-    this.currentLyricIndex++;
-    const nextLyric = this.lyricSpans?.[this.currentLyricIndex];
+    const nextLyric = this.lyricSpans?.[this.currentLyricIndex + 1];
     if (nextLyric) {
       nextLyric.scrollIntoView({ block: "center", behavior: "smooth" });
       nextLyric.classList.remove("unvisited");
@@ -135,6 +95,45 @@ export class MusicPlayer {
     this.progressEl.addEventListener("click", this.handleSeekFn);
   }
 
+  handleLyricsUpdate() {
+    const currentTime = this.audioEl.currentTime;
+
+    if (!this.lyricArr) {
+      return;
+    }
+
+    const oldLyric = this.lyricArr[this.currentLyricIndex];
+    const nextLyric = this.lyricArr[this.currentLyricIndex + 1];
+
+    if (currentTime > oldLyric[0] && nextLyric && currentTime < nextLyric[0]) {
+      return;
+    } else if (currentTime < oldLyric[0]) {
+      const activeIdx =
+        this.lyricArr.findIndex(([timestamp]) => currentTime > timestamp) - 1;
+      if (activeIdx < 0) {
+        return;
+      }
+      this.updateTimedLyrics(activeIdx);
+    } else if (nextLyric && currentTime > nextLyric[0]) {
+      const nextNextLyric = this.lyricArr[this.currentLyricIndex + 2];
+      console.log({ nextNextLyric });
+      if (!nextNextLyric || (nextNextLyric && currentTime < nextNextLyric[0]))
+        this.updateTimedLyrics(this.currentLyricIndex + 1);
+      else {
+        const activeIdx =
+          this.lyricArr
+            .slice(this.currentLyricIndex + 1)
+            .findIndex(([timestamp]) => timestamp > currentTime) +
+          this.currentLyricIndex;
+        if (activeIdx < 0) {
+          return;
+        }
+        console.log({ activeIdx, len: this.lyricArr });
+        this.updateTimedLyrics(activeIdx);
+      }
+    }
+  }
+
   initLyricEvents() {
     if (!this.lyricArr) {
       return;
@@ -142,13 +141,13 @@ export class MusicPlayer {
     const lyricsContentEl = document.querySelector(
       ".lyrics-card__content"
     ) as HTMLDivElement;
-    for (const [timeStamp, lyric] of this.lyricArr) {
+    for (let i = 0; i < this.lyricArr.length; i++) {
+      const [timeStamp, lyric] = this.lyricArr[i];
       const span = document.createElement("span");
       span.classList.add("lyrics-card__content__lyric");
       span.textContent = `${lyric}`;
       span.addEventListener("click", () => {
         this.audioEl.currentTime = timeStamp;
-        this.hardUpdateLyricClasses();
       });
       lyricsContentEl.appendChild(span);
     }
@@ -156,17 +155,47 @@ export class MusicPlayer {
     this.lyricSpans = document.querySelectorAll(".lyrics-card__content__lyric");
   }
 
+  updateTimedLyrics(newIdx: number) {
+    const oldIdx = this.currentLyricIndex;
+
+    if (newIdx === oldIdx + 1) {
+      // Move to the next lyric
+      this.moveToNextLyric();
+      this.currentLyricIndex++;
+    } else {
+      // Hard update
+      if (!this.lyricSpans) {
+        return;
+      }
+      this.currentLyricIndex = newIdx;
+      for (let i = 0; i < this.lyricSpans.length; i++) {
+        const span = this.lyricSpans[i];
+        span.classList.remove("active");
+        span.classList.remove("unvisited");
+        span.classList.remove("visited");
+
+        if (i < newIdx) {
+          span.classList.add("visited");
+        } else if (i === newIdx) {
+          span.classList.add("active");
+          span.scrollIntoView({ block: "center", behavior: "smooth" });
+        } else {
+          span.classList.add("unvisited");
+        }
+      }
+    }
+  }
+
   handleSeek(e: MouseEvent) {
     const { clientX } = e;
     const { left, width } = this.progressEl.getBoundingClientRect();
     const percentage = (clientX - left) / width;
     this.audioEl.currentTime = this.audioEl.duration * percentage;
-    this.hardUpdateLyricClasses();
   }
 
   destroy() {
     this.audioEl.removeEventListener("timeupdate", this.updateProgressFn);
-    this.audioEl.removeEventListener("timeupdate", this.updateLyricClassesFn);
+    this.audioEl.removeEventListener("timeupdate", this.handleLyricsUpdateFn);
     this.audioEl.src = "";
   }
 }
