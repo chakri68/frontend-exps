@@ -26,7 +26,7 @@ function hideElement(el: HTMLElement) {
 }
 
 function processLyrics(lyrics: string) {
-  const lines = lyrics.split("\n");
+  const lines = lyrics.split("\n").map((l) => l.trim());
   return lines.reduce(
     (acc, line) => {
       const timeStamp = line.match(/\[(\d|\.|:)+\]/g)?.[0]; // Of the form [00:00.00]
@@ -43,6 +43,13 @@ function processLyrics(lyrics: string) {
         }, 0);
 
       const lyric = line.replace(timeStamp, "").trim();
+      if (acc[timeStampSeconds] !== undefined) {
+        return {
+          ...acc,
+          [timeStampSeconds + 1]: lyric,
+        };
+      }
+
       return {
         ...acc,
         [timeStampSeconds]: lyric,
@@ -53,6 +60,7 @@ function processLyrics(lyrics: string) {
 }
 
 const inpCard = document.getElementById("inp-card") as HTMLElement;
+const lyricsTextArea = document.getElementById("lyrics") as HTMLTextAreaElement;
 inpCard.querySelector("button")?.addEventListener("click", handleMusicSubmit);
 const lyricsCard = document.getElementById("lyrics-card") as HTMLElement;
 const mainEl = document.querySelector("main") as HTMLElement;
@@ -74,7 +82,13 @@ async function handleMusicSubmit() {
 
   // Read the file
   const { tags } = (await jsMediaTags(file)) as any;
-  const lyrics = tags.lyrics?.lyrics;
+
+  console.log({ tags });
+
+  const lyrics = lyricsTextArea.value?.trim() || tags.lyrics?.lyrics;
+
+  console.log({ lyrics });
+
   const albumArt = tags.picture?.data;
 
   const bgEl = lyricsCard;
